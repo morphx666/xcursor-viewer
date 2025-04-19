@@ -2,4 +2,4 @@
 
 Simple X11 Cursor viewer
 
-![image](https://github.com/user-attachments/assets/59a80d0c-cc64-4c5c-b98c-2fc0dcfd4847)
+![image](https://github.com/user-attachments/assets/495f739a-74d7-43f4-9486-098f3807f214)
