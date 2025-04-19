@@ -79,10 +79,12 @@ internal class XCursor {
 
                             Debug.WriteLine($"Image: Width: {imageChunk.Width}, Height: {imageChunk.Height}, XHot: {imageChunk.XHot}, YHot: {imageChunk.YHot}, Delay: {imageChunk.Delay}");
 
-                            Bitmap bitmap = new((int)imageChunk.Width, (int)imageChunk.Height, PixelFormat.Format32bppRgba);
+                            UInt32 w = imageChunk.Width > imageChunk.Height ? imageChunk.Width : imageChunk.Height;
+                            UInt32 h = imageChunk.Width > imageChunk.Height ? imageChunk.Height : imageChunk.Width;
+                            Bitmap bitmap = new((int)w, (int)h, PixelFormat.Format32bppRgba);
                             using(BitmapData bd = bitmap.Lock()) {
-                                for(int x = 0; x < imageChunk.Width; x++) {
-                                    for(int y = 0; y < imageChunk.Height; y++) {
+                                for(int x = 0; x < w; x++) {
+                                    for(int y = 0; y < h; y++) {
                                         UInt32 pixel = br.ReadUInt32();
                                         imageChunk.Pixels[x * y] = pixel;
                                         if(imageChunk.Pixels[x * y] != 0) {

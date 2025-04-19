@@ -15,6 +15,7 @@ public partial class MainForm : Form {
     private XCursor selectedCursor;
     private (int Index, long LastUpdate)[] frames = [];
     private bool showAllFiles = true;
+    private float zoom = 1.0f;
 
     private Bitmap driveIcon = Bitmap.FromResource("xcursor_viewer.Resources.drive-icon.png");
     private Bitmap folderIcon = Bitmap.FromResource("xcursor_viewer.Resources.folder-icon.png");
@@ -23,10 +24,21 @@ public partial class MainForm : Form {
     public MainForm() {
         JsonReader.Load(this);
 
+        Canvas.MouseWheel += (sender, e) => {
+            if(e.Delta.Height > 0) {
+                zoom += 0.1f;
+                if(zoom > 10) zoom = 10;
+            } else if(e.Delta.Height < 0) {
+                zoom -= 0.1f;
+                if(zoom < 0.1f) zoom = 0.1f;
+            }
+        };
+
         Canvas.Paint += (sender, e) => {
             var g = e.Graphics;
 
             g.Clear(Color.FromArgb(0x1c, 0x1e, 0x1f));
+            g.ScaleTransform(zoom, zoom);
 
             var currentTime = DateTime.UtcNow.Ticks / 10_000;
 
@@ -37,7 +49,7 @@ public partial class MainForm : Form {
                 for(int i = 0; i < selectedCursor.Images.Count; i++) {
                     Bitmap frame = selectedCursor.Images[i][frames[i].Index];
 
-                    if(cx + frame.Width >= Canvas.Width - p) {
+                    if(cx + frame.Width >= (Canvas.Width - p) / zoom) {
                         cx = p;
                         cy += frame.Height + p;
                     }
