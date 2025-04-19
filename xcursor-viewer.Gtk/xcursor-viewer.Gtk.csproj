@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>xcursor_viewer.Gtk</RootNamespace>
+    <AssemblyVersion>2025.4.19.203</AssemblyVersion>
+    <FileVersion>2025.4.19.203</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\xcursor-viewer\xcursor-viewer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.9.0" />
+  </ItemGroup>
+	
+</Project>

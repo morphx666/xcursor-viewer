@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <RootNamespace>xcursor_viewer.Wpf</RootNamespace>
+    <AssemblyVersion>2025.4.18.1</AssemblyVersion>
+    <FileVersion>2025.4.18.1</FileVersion>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\xcursor-viewer\xcursor-viewer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.9.0" />
+  </ItemGroup>
+
+</Project>

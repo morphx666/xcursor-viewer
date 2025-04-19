@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>xcursor_viewer</RootNamespace>
+    <AssemblyVersion>2025.4.19.208</AssemblyVersion>
+    <FileVersion>2025.4.19.208</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\cursor-icon.png" />
+    <None Remove="Resources\drive-icon.png" />
+    <None Remove="Resources\file-icon.png" />
+    <None Remove="Resources\folder-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\cursor-icon.png" />
+    <EmbeddedResource Include="Resources\drive-icon.png" />
+    <EmbeddedResource Include="Resources\file-icon.png" />
+    <EmbeddedResource Include="Resources\folder-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Forms" Version="2.9.0" />
+    <PackageReference Include="Eto.Serialization.Json" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

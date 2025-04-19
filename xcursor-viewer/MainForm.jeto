@@ -1,0 +1,24 @@
+﻿{
+    "$type": "Form",
+    "Title": "XCursor Viewer",
+    "MinimumSize": "800,600",
+    "Size": "980,600",
+    "Padding": "10",
+    "Content": {
+        "$type": "Splitter",
+        "Orientation": "Horizontal",
+        "Panel1MinimumSize": "300",
+        "Panel1": {
+            "$type": "TreeGridView",
+            "$name": "TreeGridViewFolders",
+            "ShowHeader": "false",
+            "GridLines": "None",
+        },
+        "Panel2": {
+            "$type": "Drawable",
+            "$name": "Canvas",
+            "CanFocus": "true",
+            "BackgroundColor": "Black",
+        }
+    }
+}
