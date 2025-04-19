@@ -20,9 +20,12 @@ internal class XCursor {
     public List<(string, CommentTypes)> Comments { get; set; } = [];
     public List<X11Comment> CommentsChunks { get; set; } = [];
     public List<X11Image> ImagesChunks { get; set; } = [];
+    public string Name { get; }
 
     public XCursor(string fileName) {
         List<Bitmap> tmpImages = [];
+
+        Name = Path.GetFileNameWithoutExtension(fileName);
 
         using(FileStream fs = new(fileName, FileMode.Open, FileAccess.Read)) {
             using(BinaryReader br = new(fs)) {
@@ -34,11 +37,6 @@ internal class XCursor {
                 };
                 header.TableOfContents = new X11CursorTableOfContents[header.TableOfContentsCount];
 
-                Debug.WriteLine($"Magic: {header.Magic:X8}");
-                Debug.WriteLine($"HeaderSize: {header.Size}");
-                Debug.WriteLine($"HeaderVersion: {header.Version}");
-                Debug.WriteLine($"TableOfContentsCount: {header.TableOfContentsCount}");
-
                 for(int i = 0; i < header.TableOfContentsCount; i++) {
                     X11CursorTableOfContents toc = new() {
                         Type = br.ReadUInt32(),
@@ -46,8 +44,6 @@ internal class XCursor {
                         Position = br.ReadUInt32()
                     };
                     header.TableOfContents[i] = toc;
-
-                    Debug.WriteLine($"TableOfContents[{i}]: Type: {toc.Type:X8}, SubType: {toc.SubType:X8}, Position: {toc.Position}");
 
                     long currentPosition = fs.Position;
                     fs.Seek(toc.Position, SeekOrigin.Begin);
@@ -82,8 +78,6 @@ internal class XCursor {
                             };
                             imageChunk.Pixels = new UInt32[imageChunk.Width * imageChunk.Height];
                             ImagesChunks.Add(imageChunk);
-
-                            Debug.WriteLine($"Image: SubType: {imageChunk.Chunk.SubType}, Width: {imageChunk.Width}, Height: {imageChunk.Height}, XHot: {imageChunk.XHot}, YHot: {imageChunk.YHot}, Delay: {imageChunk.Delay}");
 
                             UInt32 w = imageChunk.Width;
                             UInt32 h = imageChunk.Height;

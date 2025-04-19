@@ -13,12 +13,14 @@ public partial class MainForm {
         public Icon Icon { get; }
         public string ImagesCountAsString  => Cursor?.Images.Count.ToString() ?? "";
         public string HasAnimationsAsString => (Cursor?.Images.Any(f => f.Count > 1) ?? false) ? "✓" : "";
+        public bool IsFile { get; }
 
         public FSItem() { }
 
         public FSItem(string name, string path, bool isFile, Bitmap icon = null) {
             Name = name;
             Path = path;
+            IsFile = isFile;
 
             if(isFile && File.Exists(path) && XCursor.IsXCursor(path)) {
                 Cursor = new XCursor(path);
