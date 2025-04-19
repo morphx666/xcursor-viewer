@@ -7,6 +7,11 @@ namespace xcursor_viewer;
 
 internal class X11Structs {
     internal const UInt32 XCURSOR_MAGIC = 0x58637572;
+    internal const UInt32 XCURSOR_COMMENT_TYPE = 0xfffe0001;
+    internal const UInt32 XCURSOR_IMAGE_TYPE = 0xfffd0002;
+    internal const UInt32 XCURSOR_COMMENT_COPYRIGHT = 1;
+    internal const UInt32 XCURSOR_COMMENT_LICENSE = 2;
+    internal const UInt32 XCURSOR_COMMENT_OTHER = 3;
 
     internal struct X11CursorHeader {
         public UInt32 Magic;
@@ -23,7 +28,7 @@ internal class X11Structs {
     }
 
     internal struct X11Chunk {
-        public UInt32 Size;
+        public UInt32 Length;
         public UInt32 Type;
         public UInt32 SubType;
         public UInt32 Version;

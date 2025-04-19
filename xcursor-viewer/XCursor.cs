@@ -9,9 +9,15 @@ using static xcursor_viewer.X11Structs;
 namespace xcursor_viewer;
 
 internal class XCursor {
+    public enum CommentTypes {
+        CopyRight = (int)XCURSOR_COMMENT_COPYRIGHT,
+        License = (int)XCURSOR_COMMENT_LICENSE,
+        Other = (int)XCURSOR_COMMENT_OTHER
+    }
+
     public X11CursorHeader Header { get; set; }
     public List<List<Bitmap>> Images { get; set; } = [];
-    public List<string> Comments { get; set; } = [];
+    public List<(string, CommentTypes)> Comments { get; set; } = [];
     public List<X11Comment> CommentsChunks { get; set; } = [];
     public List<X11Image> ImagesChunks { get; set; } = [];
 
@@ -46,10 +52,10 @@ internal class XCursor {
                     long currentPosition = fs.Position;
                     fs.Seek(toc.Position, SeekOrigin.Begin);
                     switch(toc.Type) {
-                        case 0xfffe0001: // Comment
+                        case XCURSOR_COMMENT_TYPE: // Comment
                             X11Comment commentChunk = new() {
                                 Chunk = new() {
-                                    Size = br.ReadUInt32(),
+                                    Length = br.ReadUInt32(),
                                     Type = br.ReadUInt32(),
                                     SubType = br.ReadUInt32(),
                                     Version = br.ReadUInt32()
@@ -57,13 +63,13 @@ internal class XCursor {
                                 Length = br.ReadUInt32()
                             };
                             commentChunk.Comment = new string(br.ReadChars((int)commentChunk.Length));
-                            Comments.Add(commentChunk.Comment);
+                            Comments.Add((commentChunk.Comment, (CommentTypes)commentChunk.Chunk.Type));
                             CommentsChunks.Add(commentChunk);
                             break;
-                        case 0xfffd0002: // Image
+                        case XCURSOR_IMAGE_TYPE: // Image
                             X11Image imageChunk = new() {
                                 Chunk = new() {
-                                    Size = br.ReadUInt32(),
+                                    Length = br.ReadUInt32(),
                                     Type = br.ReadUInt32(),
                                     SubType = br.ReadUInt32(),
                                     Version = br.ReadUInt32()
