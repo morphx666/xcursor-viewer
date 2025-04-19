@@ -4,6 +4,7 @@ using System;
 namespace xcursor_viewer;
 
 // https://www.x.org/releases/X11R7.7/doc/man/man3/Xcursor.3.xhtml
+// https://www.x.org/archive/X11R6.8.1/doc/Xcursor.3.html
 
 internal class X11Structs {
     internal const UInt32 XCURSOR_MAGIC = 0x58637572;
