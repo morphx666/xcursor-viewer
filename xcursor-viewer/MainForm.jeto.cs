@@ -86,10 +86,24 @@ public partial class MainForm : Form {
             Sortable = true,
             AutoSize = true,
         });
+        TreeGridViewFolders.Columns.Add(new GridColumn {
+            DataCell = new TextBoxCell("ImagesCountAsString"),
+            HeaderText = "Images",
+            Editable = false,
+            Sortable = true,
+            AutoSize = true,
+        });
+        TreeGridViewFolders.Columns.Add(new GridColumn {
+            DataCell = new TextBoxCell("HasAnimationsAsString"),
+            HeaderText = "Animations",
+            Editable = false,
+            Sortable = true,
+            AutoSize = true,
+        });
 
         DriveInfo[] drives = DriveInfo.GetDrives();
         foreach(DriveInfo drive in drives) {
-            FSItem item = new FSItem(drive.Name, drive.Name, false, driveIcon);
+            FSItem item = new(drive.Name, drive.Name, false, driveIcon);
             PopulateTreeGridItem(drive.Name, item);
             treeGridItems.Add(item);
         }

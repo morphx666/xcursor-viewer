@@ -11,6 +11,8 @@ public partial class MainForm {
         public string Path { get; }
         public XCursor Cursor { get; }
         public Bitmap Icon { get; }
+        public string ImagesCountAsString  => Cursor?.Images.Count.ToString() ?? "";
+        public string HasAnimationsAsString => (Cursor?.Images.Any(f => f.Count > 1) ?? false) ? "✓" : "";
 
         public FSItem() { }
 
