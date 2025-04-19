@@ -119,16 +119,17 @@ public partial class MainForm : Form {
 
         DriveInfo[] drives = DriveInfo.GetDrives();
         foreach(DriveInfo drive in drives) {
-            if(Environment.OSVersion.Platform == PlatformID.Win32NT) {
-                if(drive.DriveType != DriveType.Unknown && drive.DriveType != DriveType.NoRootDirectory) {
-                    FSItem item = new($"{drive.Name} {drive.VolumeLabel}", drive.Name, false, driveIcon);
-                    treeGridItems.Add(item);
+            if(drive.DriveType != DriveType.Unknown
+                && drive.DriveType != DriveType.NoRootDirectory
+                && drive.DriveType != DriveType.Ram) {
+                string title = "";
+                if(drive.Name == drive.VolumeLabel) {
+                    title = drive.Name;
+                } else {
+                    title = $"{drive.Name} ({drive.VolumeLabel})";
                 }
-            } else {
-                if(drive.DriveType == DriveType.Removable || drive.DriveType == DriveType.Network || drive.DriveType == DriveType.CDRom) {
-                    FSItem item = new($"{drive.Name} {drive.VolumeLabel}", drive.Name, false, driveIcon);
-                    treeGridItems.Add(item);
-                }
+                FSItem item = new(title, drive.Name, false, driveIcon);
+                treeGridItems.Add(item);
             }
         }
 

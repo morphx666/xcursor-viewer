@@ -24,7 +24,7 @@ internal class XCursor {
     public XCursor(string fileName) {
         List<Bitmap> tmpImages = [];
 
-        using(FileStream fs = new(fileName, FileMode.Open)) {
+        using(FileStream fs = new(fileName, FileMode.Open, FileAccess.Read)) {
             using(BinaryReader br = new(fs)) {
                 X11CursorHeader header = new() {
                     Magic = br.ReadUInt32(),
@@ -122,7 +122,7 @@ internal class XCursor {
 
     public static bool IsXCursor(string fileName) {
         try {
-            using(FileStream fs = new(fileName, FileMode.Open)) {
+            using(FileStream fs = new(fileName, FileMode.Open, FileAccess.Read)) {
                 using(BinaryReader br = new(fs)) {
                     byte[] b = br.ReadBytes(4);
                     Array.Reverse(b);
