@@ -29,8 +29,6 @@ public partial class MainForm {
 
                 if(!IsEmpty(path)) base.Children.Add(new FSItem());
             }
-
-            //base.Values = [name, path];
         }
 
         public static bool IsEmpty(string path) {

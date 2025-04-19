@@ -5,6 +5,7 @@ using Eto.Serialization.Json;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 
 namespace xcursor_viewer;
 
@@ -103,9 +104,10 @@ public partial class MainForm : Form {
 
         DriveInfo[] drives = DriveInfo.GetDrives();
         foreach(DriveInfo drive in drives) {
-            FSItem item = new(drive.Name, drive.Name, false, driveIcon);
-            PopulateTreeGridItem(drive.Name, item);
-            treeGridItems.Add(item);
+            if(drive.DriveType != DriveType.Unknown && drive.DriveType != DriveType.NoRootDirectory) {
+                FSItem item = new($"{drive.Name} {drive.VolumeLabel}", drive.Name, false, driveIcon);
+                treeGridItems.Add(item);
+            }
         }
 
         TreeGridViewFolders.DataStore = treeGridItems;
@@ -135,14 +137,20 @@ public partial class MainForm : Form {
     private void PopulateTreeGridItem(string path, FSItem item) {
         DirectoryInfo dir = new(path);
 
-        foreach(DirectoryInfo subDir in dir.GetDirectories()) {
+        EnumerationOptions options = new() {
+            AttributesToSkip = FileAttributes.Hidden | FileAttributes.System,
+            IgnoreInaccessible = true,
+            RecurseSubdirectories = false,
+        };
+
+        foreach(DirectoryInfo subDir in dir.GetDirectories("*", options).OrderBy(d => d.Name)) {
             if(!subDir.Attributes.HasFlag(FileAttributes.Hidden)) {
                 FSItem subItem = new(subDir.Name, subDir.FullName, false, folderIcon);
                 item.Children.Add(subItem);
             }
         }
 
-        foreach(FileInfo file in dir.GetFiles()) {
+        foreach(FileInfo file in dir.GetFiles("*", options).OrderBy(f => f.Name)) {
             if(!file.Attributes.HasFlag(FileAttributes.Hidden)) {
                 FSItem subItem = new(file.Name, file.FullName, true, fileIcon);
                 if(showAllFiles || subItem.Cursor != null) {

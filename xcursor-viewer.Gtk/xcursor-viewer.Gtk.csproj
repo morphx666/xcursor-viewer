@@ -4,8 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>xcursor_viewer.Gtk</RootNamespace>
-    <AssemblyVersion>2025.4.19.232</AssemblyVersion>
-    <FileVersion>2025.4.19.232</FileVersion>
+    <AssemblyVersion>2025.4.19.258</AssemblyVersion>
+    <FileVersion>2025.4.19.258</FileVersion>
+    <PublishAot>False</PublishAot>
+    <PublishTrimmed>False</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,5 +17,5 @@
   <ItemGroup>
     <PackageReference Include="Eto.Platform.Gtk" Version="2.9.0" />
   </ItemGroup>
-	
+
 </Project>

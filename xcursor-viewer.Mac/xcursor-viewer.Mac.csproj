@@ -7,9 +7,9 @@
 
     <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
 
-    <AssemblyVersion>2025.4.18.1</AssemblyVersion>
+    <AssemblyVersion>2025.4.19.3</AssemblyVersion>
 
-    <FileVersion>2025.4.18.1</FileVersion>
+    <FileVersion>2025.4.19.3</FileVersion>
   </PropertyGroup>
 	
   <ItemGroup>

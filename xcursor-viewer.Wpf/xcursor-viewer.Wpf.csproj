@@ -4,8 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
     <RootNamespace>xcursor_viewer.Wpf</RootNamespace>
-    <AssemblyVersion>2025.4.18.1</AssemblyVersion>
-    <FileVersion>2025.4.18.1</FileVersion>
+    <AssemblyVersion>2025.4.19.3</AssemblyVersion>
+    <FileVersion>2025.4.19.3</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
