@@ -4,12 +4,11 @@ using Eto.Drawing;
 using Eto.Serialization.Json;
 using System.Threading.Tasks;
 using System.IO;
-using System.Linq;
 using System.Diagnostics;
 
 namespace xcursor_viewer;
 
-public class MainForm : Form {
+public partial class MainForm : Form {
     protected Drawable Canvas;
     protected Splitter MainSplitter;
     protected TreeGridView TreeGridViewFolders;
@@ -20,46 +19,6 @@ public class MainForm : Form {
     private Bitmap driveIcon = Bitmap.FromResource("xcursor_viewer.Resources.drive-icon.png");
     private Bitmap folderIcon = Bitmap.FromResource("xcursor_viewer.Resources.folder-icon.png");
     private Bitmap fileIcon = Bitmap.FromResource("xcursor_viewer.Resources.file-icon.png");
-
-    private class FSItem : TreeGridItem {
-        public string Name { get; set; }
-        public string Path { get; }
-        public XCursor Cursor { get; }
-        public Bitmap Icon { get; }
-
-        public FSItem() { }
-
-        public FSItem(string name, string path, bool isFile, Bitmap icon = null) {
-            Name = name;
-            Path = path;
-
-            if(isFile && File.Exists(path) && XCursor.IsXCursor(path)) {
-                Cursor = new XCursor(path);
-                Icon = Cursor.Images.First().First();
-            } else {
-                Cursor = null;
-                Icon = icon;
-
-                if(!IsEmpty(path)) base.Children.Add(new FSItem());
-            }
-
-            //base.Values = [name, path];
-        }
-
-        public static bool IsEmpty(string path) {
-            try {
-                DirectoryInfo dir = new(path);
-                if(dir.GetDirectories("*", SearchOption.TopDirectoryOnly).Length > 0 || dir.GetFiles("*", SearchOption.TopDirectoryOnly).Length > 0) {
-                    return false;
-                }
-            } catch { }
-            return true;
-        }
-
-        public override string ToString() {
-            return Name;
-        }
-    }
 
     public MainForm() {
         JsonReader.Load(this);
@@ -89,7 +48,6 @@ public class MainForm : Form {
                         if(frames[i].LastUpdate == 0) {
                             frames[i].LastUpdate = currentTime;
                         } else if(currentTime - frames[i].LastUpdate >= selectedCursor.ImagesChunks[i].Delay) {
-                            Debug.WriteLine(currentTime - frames[i].LastUpdate);
                             frames[i].LastUpdate = currentTime;
                             frames[i].Index++;
                             if(frames[i].Index >= selectedCursor.Images[i].Count) frames[i].Index = 0;
