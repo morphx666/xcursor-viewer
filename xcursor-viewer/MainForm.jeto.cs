@@ -112,25 +112,41 @@ public partial class MainForm : Form {
             AutoSize = true,
         });
 
-        if(Environment.OSVersion.Platform != PlatformID.Win32NT) {
-            treeGridItems.Add(new FSItem("/", "", false, driveIcon));
-            treeGridItems.Add(new FSItem(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "~", false, driveIcon));
-        }
-
         DriveInfo[] drives = DriveInfo.GetDrives();
-        foreach(DriveInfo drive in drives) {
-            if(drive.DriveType != DriveType.Unknown
-                && drive.DriveType != DriveType.NoRootDirectory
-                && drive.DriveType != DriveType.Ram) {
-                string title = "";
-                if(drive.Name == drive.VolumeLabel) {
-                    title = drive.Name;
-                } else {
-                    title = $"{drive.Name} ({drive.VolumeLabel})";
+        if(Environment.OSVersion.Platform == PlatformID.Win32NT) {
+            foreach(DriveInfo drive in drives) {
+                if(drive.DriveType != DriveType.Unknown
+                    && drive.DriveType != DriveType.NoRootDirectory
+                    && drive.DriveType != DriveType.Ram) {
+                    string title = "";
+                    if(drive.Name == drive.VolumeLabel) {
+                        title = drive.Name;
+                    } else {
+                        title = $"{drive.Name} ({drive.VolumeLabel})";
+                    }
+                    FSItem item = new(title, drive.Name, false, driveIcon);
+                    treeGridItems.Add(item);
                 }
-                FSItem item = new(title, drive.Name, false, driveIcon);
-                treeGridItems.Add(item);
             }
+        } else {
+            treeGridItems.Add(new FSItem("/", "/", false, driveIcon));
+            string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            treeGridItems.Add(new FSItem(homeDir, homeDir, false, driveIcon));
+
+            foreach(DriveInfo drive in drives) {
+                if(drive.DriveType == DriveType.Removable
+                    || drive.DriveType == DriveType.Network
+                    || drive.DriveType == DriveType.CDRom) {
+                    string title = "";
+                    if(drive.Name == drive.VolumeLabel) {
+                        title = drive.Name;
+                    } else {
+                        title = $"{drive.Name} ({drive.VolumeLabel})";
+                    }
+                    FSItem item = new(title, drive.Name, false, driveIcon);
+                    treeGridItems.Add(item);
+                }
+            }            
         }
 
         TreeGridViewFolders.DataStore = treeGridItems;
