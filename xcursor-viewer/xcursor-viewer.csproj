@@ -3,22 +3,25 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>xcursor_viewer</RootNamespace>
-    <AssemblyVersion>2025.4.19.263</AssemblyVersion>
-    <FileVersion>2025.4.19.263</FileVersion>
+    <AssemblyVersion>2025.4.19.274</AssemblyVersion>
+    <FileVersion>2025.4.19.274</FileVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\cursor-icon.png" />
-    <None Remove="Resources\drive-icon.png" />
-    <None Remove="Resources\file-icon.png" />
-    <None Remove="Resources\folder-icon.png" />
+    <None Remove="Resources\drive-icon-white.png" />
+    <None Remove="Resources\file-icon-white.png" />
+    <None Remove="Resources\folder-icon-white.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\cursor-icon.png" />
-    <EmbeddedResource Include="Resources\drive-icon.png" />
-    <EmbeddedResource Include="Resources\file-icon.png" />
-    <EmbeddedResource Include="Resources\folder-icon.png" />
+    <EmbeddedResource Include="Resources\app-icon.png" />
+    <EmbeddedResource Include="Resources\drive-icon-black.png" />
+    <EmbeddedResource Include="Resources\drive-icon-white.png" />
+    <EmbeddedResource Include="Resources\file-icon-black.png" />
+    <EmbeddedResource Include="Resources\file-icon-white.png" />
+    <EmbeddedResource Include="Resources\folder-icon-black.png" />
+    <EmbeddedResource Include="Resources\folder-icon-white.png" />
   </ItemGroup>
 
   <ItemGroup>

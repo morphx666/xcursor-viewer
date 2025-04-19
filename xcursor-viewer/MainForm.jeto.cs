@@ -4,8 +4,9 @@ using Eto.Drawing;
 using Eto.Serialization.Json;
 using System.Threading.Tasks;
 using System.IO;
-using System.Diagnostics;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace xcursor_viewer;
 
@@ -18,12 +19,17 @@ public partial class MainForm : Form {
     private bool showAllFiles = true;
     private float zoom = 1.0f;
 
-    private Bitmap driveIcon = Bitmap.FromResource("xcursor_viewer.Resources.drive-icon.png");
-    private Bitmap folderIcon = Bitmap.FromResource("xcursor_viewer.Resources.folder-icon.png");
-    private Bitmap fileIcon = Bitmap.FromResource("xcursor_viewer.Resources.file-icon.png");
+    private Bitmap driveIcon;
+    private Bitmap folderIcon;
+    private Bitmap fileIcon;
 
     public MainForm() {
         JsonReader.Load(this);
+
+        string theme = Environment.OSVersion.Platform == PlatformID.Win32NT ? "black" : "white";
+        driveIcon = Bitmap.FromResource($"xcursor_viewer.Resources.drive-icon-{theme}.png");
+        folderIcon = Bitmap.FromResource($"xcursor_viewer.Resources.folder-icon-{theme}.png");
+        fileIcon = Bitmap.FromResource($"xcursor_viewer.Resources.file-icon-{theme}.png");
 
         Canvas.MouseWheel += (sender, e) => {
             if(e.Delta.Height > 0) {
@@ -71,17 +77,21 @@ public partial class MainForm : Form {
         };
 
         Task.Run(async () => {
-            while(true) {
-                await Task.Delay(1);
-                Application.Instance.Invoke(Canvas.Invalidate);
-            }
+            try {
+                while(true) {
+                    await Task.Delay(1);
+                    Application.Instance.Invoke(Canvas.Invalidate);
+                }
+            } catch { }
         });
 
-        this.Icon = Icon.FromResource("xcursor_viewer.Resources.cursor-icon.png");
+        this.Icon = Icon.FromResource("xcursor_viewer.Resources.app-icon.png");
 
         TreeGridItemCollection treeGridItems = [];
+        ImageTextCell imageTextCell = new("Icon", "Name");
+
         TreeGridViewFolders.Columns.Add(new GridColumn {
-            DataCell = new ImageTextCell("Icon", "Name"),
+            DataCell = imageTextCell,
             HeaderText = "Folders",
             Editable = false,
             Sortable = true,
@@ -102,11 +112,23 @@ public partial class MainForm : Form {
             AutoSize = true,
         });
 
+        if(Environment.OSVersion.Platform != PlatformID.Win32NT) {
+            treeGridItems.Add(new FSItem("/", "", false, driveIcon));
+            treeGridItems.Add(new FSItem(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "~", false, driveIcon));
+        }
+
         DriveInfo[] drives = DriveInfo.GetDrives();
         foreach(DriveInfo drive in drives) {
-            if(drive.DriveType != DriveType.Unknown && drive.DriveType != DriveType.NoRootDirectory) {
-                FSItem item = new($"{drive.Name} {drive.VolumeLabel}", drive.Name, false, driveIcon);
-                treeGridItems.Add(item);
+            if(Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                if(drive.DriveType != DriveType.Unknown && drive.DriveType != DriveType.NoRootDirectory) {
+                    FSItem item = new($"{drive.Name} {drive.VolumeLabel}", drive.Name, false, driveIcon);
+                    treeGridItems.Add(item);
+                }
+            } else {
+                if(drive.DriveType == DriveType.Removable || drive.DriveType == DriveType.Network || drive.DriveType == DriveType.CDRom) {
+                    FSItem item = new($"{drive.Name} {drive.VolumeLabel}", drive.Name, false, driveIcon);
+                    treeGridItems.Add(item);
+                }
             }
         }
 

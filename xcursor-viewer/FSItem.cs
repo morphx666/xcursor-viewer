@@ -10,7 +10,7 @@ public partial class MainForm {
         public string Name { get; set; }
         public string Path { get; }
         public XCursor Cursor { get; }
-        public Bitmap Icon { get; }
+        public Icon Icon { get; }
         public string ImagesCountAsString  => Cursor?.Images.Count.ToString() ?? "";
         public string HasAnimationsAsString => (Cursor?.Images.Any(f => f.Count > 1) ?? false) ? "✓" : "";
 
@@ -22,10 +22,10 @@ public partial class MainForm {
 
             if(isFile && File.Exists(path) && XCursor.IsXCursor(path)) {
                 Cursor = new XCursor(path);
-                Icon = Cursor.Images.First().First();
+                Icon = Cursor.Images.First().First().WithSize(22, 22);
             } else {
                 Cursor = null;
-                Icon = icon;
+                Icon = icon.WithSize(22, 22);
 
                 if(!IsEmpty(path)) base.Children.Add(new FSItem());
             }
