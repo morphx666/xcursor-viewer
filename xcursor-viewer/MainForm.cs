@@ -155,9 +155,11 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 int maxFrameHeight = 0;
 
                 g.DrawText(cursorNameFont, darkMode ? Brushes.White : Brushes.Black, new PointF(cx, cy), selectedCursor.Name);
-                cy += 2 * p;
+                cy += (int)(cursorNameFont.LineHeight *1.1);
 
                 for(int i = 0; i < selectedCursor.Images.Count; i++) {
+                    if(selectedCursor.Images[i].Count == 0) continue;
+
                     int frameIndex = i + j * MAX_CURSORS_PER_FILE;
                     Bitmap frame = selectedCursor.Images[i][frames[frameIndex].Index];
 
@@ -166,7 +168,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
                     maxFrameHeight = Math.Max(maxFrameHeight, frame.Height);
 
                     g.DrawImage(frame, cx, cy);
-                    cx += frame.Width + p;
+                    int wider = selectedCursor.Images[i].Max(f => f.Width);
+                    cx += wider + p;
 
                     if(selectedCursor.Images[i].Count > 1) {
                         if(frames[frameIndex].LastUpdate == 0) {

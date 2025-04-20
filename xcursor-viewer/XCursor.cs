@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using static xcursor_viewer.X11Structs;
@@ -97,17 +98,19 @@ internal class XCursor {
                     fs.Seek(currentPosition, SeekOrigin.Begin);
                 }
 
-                foreach(Bitmap bpm in tmpImages) {
-                    bool isNew = true;
-                    for(int j = 0; j < Images.Count; j++) {
-                        if(Images[j][0].Width == bpm.Width && Images[j][0].Height == bpm.Height) {
-                            Images[j].Add(bpm);
-                            isNew = false;
+                for(int j = 0; j < tmpImages.Count; j++) {
+                    UInt32 nominalSize = ImagesChunks[j].Chunk.SubType;
+                    for(int k = 0; k < ImagesChunks.Count; k++) {
+                        if(ImagesChunks[k].Chunk.SubType == nominalSize) {
+                            if(ImagesChunks[k].Chunk.SubType != nominalSize) Debugger.Break();
+
+                            while(Images.Count <= k) Images.Add([]);
+                            Images[k].Add(tmpImages[j]);
                             break;
                         }
                     }
-                    if(isNew) Images.Add([bpm]);
                 }
+                foreach(var image in Images) image.Reverse();
 
                 Header = header;
             }
