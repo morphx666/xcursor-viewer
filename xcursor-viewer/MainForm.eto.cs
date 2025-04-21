@@ -96,8 +96,9 @@ partial class MainForm : Form {
                     },
                     new StackLayout {
                         Orientation = Orientation.Horizontal,
+                        Spacing = 10,
                         Items = {
-                            new StackLayoutItem(checkBoxShowAllFiles, true),
+                            new StackLayoutItem(checkBoxShowAllFiles, false),
                             new StackLayoutItem(checkBoxDarkMode, true),
                         }
                     },
