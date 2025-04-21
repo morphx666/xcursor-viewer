@@ -64,7 +64,7 @@ internal static class Extensions {
 
     public static FSItem FindItemByPath(this TreeGridItemCollection items, string path) {
         foreach(FSItem item in items) {
-            if(item.Path == path) return item;
+            if(item.Path != null && item.Path.TrimEnd(Path.DirectorySeparatorChar) == path.TrimEnd(Path.DirectorySeparatorChar)) return item;
             FSItem found = FindItemByPath(item.Children, path);
             if(found != null) return found;
         }

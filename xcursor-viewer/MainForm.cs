@@ -35,7 +35,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
 
             List<string> itemsWithChildren = [];
             itemsWithChildren.AddRange(treeGridItems.GetItemsWithChildren());
-            itemsWithChildren = [.. itemsWithChildren.OrderBy(i => i.Split('\\').Length)];
+            itemsWithChildren = [.. itemsWithChildren.OrderBy(i => i.Split(Path.DirectorySeparatorChar).Length)];
 
             foreach(string itemPath in itemsWithChildren) {
                 FSItem item = treeGridItems.FindItemByPath(itemPath);
@@ -58,7 +58,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public MainForm() {
+    public MainForm(string[] args) {
         InitializeComponent();
 
         cursorNameFont = new Font(FontFamilies.Sans, 12, FontStyle.Bold);
@@ -72,6 +72,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
         TreeGridViewFolders.DataStore = treeGridItems;
 
         SetupEventHandlers();
+        this.Shown += (_, _) => ParseCommandLine(args);
 
         Task.Run(async () => {
             try {
@@ -81,6 +82,33 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 }
             } catch { }
         });
+    }
+
+    private void ParseCommandLine(string[] args) {
+        if(args.Length > 0) {
+            string path = args[0];
+            bool isFile = File.Exists(path);
+            bool isDirectory = Directory.Exists(path);
+            if(isFile || isDirectory) {
+                string[] tokens = path.Split(Path.DirectorySeparatorChar);
+                string currentPath = "";
+                foreach(string token in tokens) {
+                    currentPath = Path.Combine(currentPath, token);
+                    if(isFile && currentPath == path) break;
+
+                    FSItem item = treeGridItems.FindItemByPath(currentPath);
+                    item.Children.Clear();
+                    PopulateTreeGridItem(item.Path, item);
+                    item.Expanded = true;
+                }
+                FSItem selItem = treeGridItems.FindItemByPath(path);
+                TreeGridViewFolders.SelectedItem = selItem;
+                TreeGridViewFolders.ReloadData();
+                TreeGridViewFolders.ScrollToRow(TreeGridViewFolders.SelectedRow);
+            } else {
+                MessageBox.Show(this, $"The path '{path}' does not exist.", "File or Path not found", MessageBoxButtons.OK, MessageBoxType.Error);
+            }
+        }
     }
 
     private void SetupEventHandlers() {

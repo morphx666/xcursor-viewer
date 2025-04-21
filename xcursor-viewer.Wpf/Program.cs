@@ -8,7 +8,7 @@ namespace xcursor_viewer.Wpf
 		[STAThread]
 		public static void Main(string[] args)
 		{
-			new Application(Eto.Platforms.Wpf).Run(new MainForm());
+			new Application(Eto.Platforms.Wpf).Run(new MainForm(args));
 		}
 	}
 }
