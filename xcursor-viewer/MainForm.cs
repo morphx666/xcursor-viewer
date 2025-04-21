@@ -15,23 +15,36 @@ partial class MainForm : Form, INotifyPropertyChanged {
     private (int Index, long LastUpdate)[] frames = [];
     private float zoom = 1.0f;
     private bool isCtrlDown = false;
-    private Font cursorNameFont;
+    private readonly Font cursorNameFont;
 
     private const int MAX_CURSORS_PER_FILE = 1_000;
 
     private Color canvasBackgroundColor = Color.FromArgb(0x1c, 0x1e, 0x1f);
 
-    private Bitmap driveIcon;
-    private Bitmap folderIcon;
-    private Bitmap fileIcon;
+    private readonly Bitmap driveIcon;
+    private readonly Bitmap folderIcon;
+    private readonly Bitmap fileIcon;
 
-    private bool showAllFiles = true;
+    private bool showAllFiles = false;
     private bool darkMode = true;
 
     private bool ShowAllFiles {
         get => showAllFiles;
         set {
             showAllFiles = value;
+
+            List<string> itemsWithChildren = [];
+            itemsWithChildren.AddRange(treeGridItems.GetItemsWithChildren());
+            itemsWithChildren = [.. itemsWithChildren.OrderBy(i => i.Split('\\').Length)];
+
+            foreach(string itemPath in itemsWithChildren) {
+                FSItem item = treeGridItems.FindItemByPath(itemPath);
+                item.Children.Clear();
+                PopulateTreeGridItem(item.Path, item);
+                item.Expanded = true;
+            }
+            TreeGridViewFolders.ReloadData();
+
             OnPropertyChanged();
         }
     }
@@ -112,8 +125,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
             if(item.IsFile) {
                 if(item.Cursor != null) {
                     frames = new (int Index, long LastUpdate)[item.Cursor.Images.Count];
+                    selectedCursors.Add(item.Cursor);
                 }
-                selectedCursors.Add(item.Cursor);
             } else {
                 int framesCount = 0;
                 foreach(FSItem subItem in item.Children) {
@@ -122,7 +135,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                         selectedCursors.Add(subItem.Cursor);
                     }
                 }
-                frames = new (int Index, long LastUpdate)[framesCount * 1000];
+                frames = new (int Index, long LastUpdate)[framesCount * MAX_CURSORS_PER_FILE];
             }
         };
     }
@@ -155,7 +168,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 int maxFrameHeight = 0;
 
                 g.DrawText(cursorNameFont, darkMode ? Brushes.White : Brushes.Black, new PointF(cx, cy), selectedCursor.Name);
-                cy += (int)(cursorNameFont.LineHeight *1.1);
+                cy += (int)(cursorNameFont.LineHeight * 1.1);
 
                 for(int i = 0; i < selectedCursor.Images.Count; i++) {
                     if(selectedCursor.Images[i].Count == 0) continue;
@@ -168,8 +181,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
                     maxFrameHeight = Math.Max(maxFrameHeight, frame.Height);
 
                     g.DrawImage(frame, cx, cy);
-                    int wider = selectedCursor.Images[i].Max(f => f.Width);
-                    cx += wider + p;
+                    int widest = selectedCursor.Images[i].Max(f => f.Width);
+                    cx += widest + p;
 
                     if(selectedCursor.Images[i].Count > 1) {
                         if(frames[frameIndex].LastUpdate == 0) {

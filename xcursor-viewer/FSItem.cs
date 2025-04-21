@@ -2,11 +2,13 @@
 using Eto.Drawing;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using static xcursor_viewer.MainForm;
 
 namespace xcursor_viewer;
 
 public partial class MainForm {
-    private class FSItem : TreeGridItem {
+    internal class FSItem : TreeGridItem {
         public string Name { get; set; }
         public string Path { get; }
         public XCursor Cursor { get; }
@@ -29,7 +31,7 @@ public partial class MainForm {
                 Cursor = null;
                 Icon = icon.WithSize(22, 22);
 
-                if(!IsEmpty(path)) base.Children.Add(new FSItem());
+                if(!isFile && !IsEmpty(path)) base.Children.Add(new FSItem());
             }
         }
 
@@ -46,5 +48,26 @@ public partial class MainForm {
         public override string ToString() {
             return Name;
         }
+    }
+}
+
+internal static class Extensions {
+    public static List<string> GetItemsWithChildren(this TreeGridItemCollection items) {
+        List<string> expandedItems = [];
+        foreach(FSItem item in items) {
+            if(item.Expanded) expandedItems.Add(item.Path);
+            if(item.Children.Count > 0
+                || (item.Children.Count == 1 && ((FSItem)item.Children[0]).Name == "")) expandedItems.AddRange(GetItemsWithChildren(item.Children));
+        }
+        return expandedItems;
+    }
+
+    public static FSItem FindItemByPath(this TreeGridItemCollection items, string path) {
+        foreach(FSItem item in items) {
+            if(item.Path == path) return item;
+            FSItem found = FindItemByPath(item.Children, path);
+            if(found != null) return found;
+        }
+        return null;
     }
 }

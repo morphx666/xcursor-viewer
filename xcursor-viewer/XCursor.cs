@@ -110,7 +110,7 @@ internal class XCursor {
                         }
                     }
                 }
-                foreach(var image in Images) image.Reverse();
+                //foreach(var image in Images) image.Reverse();
 
                 Header = header;
             }

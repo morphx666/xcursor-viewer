@@ -12,7 +12,6 @@ namespace xcursor_viewer;
 
 partial class MainForm : Form {
     private Drawable Canvas;
-    private Splitter MainSplitter;
     private TreeGridView TreeGridViewFolders;
     private TreeGridItemCollection treeGridItems = [];
     private Scrollable scrollableContainer;
