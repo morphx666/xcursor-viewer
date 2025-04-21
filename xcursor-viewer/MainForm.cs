@@ -85,12 +85,13 @@ partial class MainForm : Form, INotifyPropertyChanged {
     }
 
     private void ParseCommandLine(string[] args) {
-        if(args.Length > 0) {
-            string path = args[0];
+        if(true || args.Length > 0) {
+            string path = args[0].TrimEnd(Path.DirectorySeparatorChar);
             bool isFile = File.Exists(path);
             bool isDirectory = Directory.Exists(path);
             if(isFile || isDirectory) {
                 string[] tokens = path.Split(Path.DirectorySeparatorChar);
+                if(tokens[0] == "") tokens[0] = Path.DirectorySeparatorChar.ToString(); // Fix for unix-like paths
                 string currentPath = "";
                 foreach(string token in tokens) {
                     currentPath = Path.Combine(currentPath, token);
