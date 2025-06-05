@@ -7,6 +7,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace xcursor_viewer;
 
@@ -208,7 +209,6 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 g.DrawText(cursorNameFont, darkMode ? Brushes.White : Brushes.Black, new PointF(cx, cy), selectedCursor.Name);
                 cy += (int)(cursorNameFont.LineHeight * 1.1);
 
-                int maxFrameHeight = 0;
                 for(int i = 0; i < selectedCursor.Images.Count; i++) {
                     if(selectedCursor.Images[i].Count == 0) continue;
 
@@ -217,7 +217,6 @@ partial class MainForm : Form, INotifyPropertyChanged {
 
                     rightMost = Math.Max(rightMost, cx + frame.Width + p);
                     bottomMost = Math.Max(bottomMost, cy + frame.Height + p);
-                    maxFrameHeight = Math.Max(maxFrameHeight, frame.Height);
 
                     g.DrawImage(frame, cx, cy);
                     int widest = selectedCursor.Images[i].Max(f => f.Width);
@@ -234,7 +233,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                     }
                 }
                 cx = p;
-                cy += maxFrameHeight + p;
+                cy += (int)selectedCursor.ImagesChunks.Max(ic => ic.Height) + p;
             }
 
             rightMost = (int)(rightMost * zoom);

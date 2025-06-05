@@ -4,8 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>xcursor_viewer.Gtk</RootNamespace>
-    <AssemblyVersion>2025.6.5.467</AssemblyVersion>
-    <FileVersion>2025.6.5.467</FileVersion>
+    <AssemblyVersion>2025.6.5.470</AssemblyVersion>
+    <FileVersion>2025.6.5.470</FileVersion>
     <PublishAot>False</PublishAot>
     <PublishTrimmed>False</PublishTrimmed>
   </PropertyGroup>
