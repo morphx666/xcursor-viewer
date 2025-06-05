@@ -85,7 +85,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
     }
 
     private void ParseCommandLine(string[] args) {
-        if(true || args.Length > 0) {
+        if(args.Length > 0) {
             string path = Path.GetFullPath(args[0]).TrimEnd(Path.DirectorySeparatorChar);
             bool isFile = File.Exists(path);
             bool isDirectory = Directory.Exists(path);

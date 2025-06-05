@@ -11,7 +11,7 @@ namespace xcursor_viewer;
 
 internal class XCursor {
     public enum CommentTypes {
-        CopyRight = (int)XCURSOR_COMMENT_COPYRIGHT,
+        Copyright = (int)XCURSOR_COMMENT_COPYRIGHT,
         License = (int)XCURSOR_COMMENT_LICENSE,
         Other = (int)XCURSOR_COMMENT_OTHER
     }
