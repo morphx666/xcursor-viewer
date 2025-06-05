@@ -119,12 +119,22 @@ partial class MainForm : Form, INotifyPropertyChanged {
         Canvas.MouseWheel += (sender, e) => {
             if(!isCtrlDown) return;
 
+            const int k = 50;
+
             if(e.Delta.Height > 0) {
                 zoom -= 0.1f;
-                if(zoom > 10) zoom = 10;
+                if(zoom > 10) {
+                    zoom = 10;
+                } else {
+                    scrollableContainer.ScrollPosition = new(scrollableContainer.ScrollPosition.X, scrollableContainer.ScrollPosition.Y - k);
+                }
             } else if(e.Delta.Height < 0) {
                 zoom += 0.1f;
-                if(zoom < 0.1f) zoom = 0.1f;
+                if(zoom < 0.1f) {
+                    zoom = 0.1f;
+                } else {
+                    scrollableContainer.ScrollPosition = new(scrollableContainer.ScrollPosition.X, scrollableContainer.ScrollPosition.Y + k);
+                }
             }
         };
 
@@ -194,11 +204,11 @@ partial class MainForm : Form, INotifyPropertyChanged {
             int rightMost = 0;
             for(int j = 0; j < selectedCursors.Count; j++) {
                 XCursor selectedCursor = selectedCursors[j];
-                int maxFrameHeight = 0;
 
                 g.DrawText(cursorNameFont, darkMode ? Brushes.White : Brushes.Black, new PointF(cx, cy), selectedCursor.Name);
                 cy += (int)(cursorNameFont.LineHeight * 1.1);
 
+                int maxFrameHeight = 0;
                 for(int i = 0; i < selectedCursor.Images.Count; i++) {
                     if(selectedCursor.Images[i].Count == 0) continue;
 
