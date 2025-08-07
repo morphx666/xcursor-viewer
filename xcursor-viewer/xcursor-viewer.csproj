@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>xcursor_viewer</RootNamespace>
-    <AssemblyVersion>2025.6.5.487</AssemblyVersion>
-    <FileVersion>2025.6.5.487</FileVersion>
+    <AssemblyVersion>2025.8.7.489</AssemblyVersion>
+    <FileVersion>2025.8.7.489</FileVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 

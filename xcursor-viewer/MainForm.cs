@@ -7,7 +7,6 @@ using System.Linq;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace xcursor_viewer;
 
@@ -109,6 +108,22 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 TreeGridViewFolders.ScrollToRow(TreeGridViewFolders.SelectedRow);
             } else {
                 MessageBox.Show(this, $"The path '{path}' does not exist.", "File or Path not found", MessageBoxButtons.OK, MessageBoxType.Error);
+            }
+        } else {
+            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string[] pathsToTry = {
+                Path.Combine(userProfile, ".icons"),
+                Path.Combine(userProfile, "Icons"),
+                "/usr/local/share/icons",
+                "/usr/share/pixmaps",
+                "/usr/share/icons",
+            };
+
+            foreach(string path in pathsToTry) {
+                if(Directory.Exists(path)) {
+                    args = [path];
+                    break;
+                }
             }
         }
     }
