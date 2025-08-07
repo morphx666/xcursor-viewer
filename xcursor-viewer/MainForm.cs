@@ -64,8 +64,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
         InitializeComponent();
 
         cursorNameFont = new Font(FontFamilies.Sans, Eto.Platform.Instance.IsWpf ? 10 : 12, FontStyle.Bold);
-        breadcrumbFont = new Font(FontFamilies.Sans, 8, FontStyle.Bold);
-        breadcrumbFontHover = new Font(FontFamilies.Sans, 8, FontStyle.Bold, FontDecoration.Underline);
+        breadcrumbFont = new Font(FontFamilies.Sans, Eto.Platform.Instance.IsWpf ? 8 : 10, FontStyle.Bold);
+        breadcrumbFontHover = new Font(FontFamilies.Sans, breadcrumbFont.Size, FontStyle.Bold, FontDecoration.Underline);
 
         string appTheme = Environment.OSVersion.Platform == PlatformID.Win32NT ? "black" : "white";
         driveIcon = Bitmap.FromResource($"xcursor_viewer.Resources.drive-icon-{appTheme}.png");
@@ -202,36 +202,42 @@ partial class MainForm : Form, INotifyPropertyChanged {
     }
 
     private void UpdateBreadcrumbs(string path) {
-        stackLayoutbreadCrumbs.Items.Clear();
+        stackLayoutBreadCrumbs.Items.Clear();
 
-        string[] tokens = path.Split(Path.DirectorySeparatorChar);
-        foreach(string token in tokens) {
+        char pathDelimiter = Path.DirectorySeparatorChar;
+        List<string> tokens = [..path.Split(pathDelimiter)];
+        if(Environment.OSVersion.Platform == PlatformID.Unix) tokens.Insert(0, "root");
+        for(int i = 0; i < tokens.Count; i++) {
+            string token = tokens[i];
             if(token == "") continue;
             Label labelToken = new() {
                 Text = token,
-                TextColor = Colors.DarkBlue,
+                //TextColor = Colors.DarkBlue,
                 Font = breadcrumbFont,
             };
+            stackLayoutBreadCrumbs.Items.Add(labelToken);
 
             labelToken.MouseEnter += (sender, e) => {
-                labelToken.TextColor = Colors.Blue;
+                //labelToken.TextColor = Colors.Blue;
                 labelToken.Font = breadcrumbFontHover;
                 labelToken.Cursor = Cursors.Pointer;
             };
 
             labelToken.MouseLeave += (sender, e) => {
-                labelToken.TextColor = Colors.DarkBlue;
+                //labelToken.TextColor = Colors.DarkBlue;
                 labelToken.Font = breadcrumbFont;
                 labelToken.Cursor = Cursors.Default;
             };
 
-            Label labelSeparator = new() {
-                Text = "\\",
-                TextColor = Colors.DarkGray,
-                Font = breadcrumbFont,
-            };
-            stackLayoutbreadCrumbs.Items.Add(labelToken);
-            stackLayoutbreadCrumbs.Items.Add(labelSeparator);
+            if(i < tokens.Count - 1) {
+                Label labelSeparator = new() {
+                    Text = pathDelimiter.ToString(),
+                    //TextColor = Colors.DarkGray,
+                    Font = breadcrumbFont,
+                };
+                stackLayoutBreadCrumbs.Items.Add(labelSeparator);
+            }
+            
         }
 
     }
