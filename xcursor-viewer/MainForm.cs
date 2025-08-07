@@ -7,6 +7,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace xcursor_viewer;
 
@@ -115,13 +116,13 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 Path.Combine(userProfile, ".icons"),
                 Path.Combine(userProfile, "Icons"),
                 "/usr/local/share/icons",
-                "/usr/share/pixmaps",
                 "/usr/share/icons",
             ];
 
             foreach(string path in pathsToTry) {
                 if(Directory.Exists(path)) {
                     args = [path];
+                    ParseCommandLine(args);
                     break;
                 }
             }
