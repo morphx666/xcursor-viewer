@@ -91,7 +91,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
             bool isDirectory = Directory.Exists(path);
             if(isFile || isDirectory) {
                 string[] tokens = path.Split(Path.DirectorySeparatorChar);
-                if(tokens[0] == "") tokens[0] = Path.DirectorySeparatorChar.ToString(); // Fix for unix-like paths
+                if(tokens[0] == "") tokens[0] = Path.DirectorySeparatorChar.ToString(); // Fix for *nix-like paths
                 string currentPath = "";
                 foreach(string token in tokens) {
                     currentPath = Path.Combine(currentPath, token);
@@ -111,13 +111,13 @@ partial class MainForm : Form, INotifyPropertyChanged {
             }
         } else {
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string[] pathsToTry = {
+            string[] pathsToTry = [
                 Path.Combine(userProfile, ".icons"),
                 Path.Combine(userProfile, "Icons"),
                 "/usr/local/share/icons",
                 "/usr/share/pixmaps",
                 "/usr/share/icons",
-            };
+            ];
 
             foreach(string path in pathsToTry) {
                 if(Directory.Exists(path)) {
