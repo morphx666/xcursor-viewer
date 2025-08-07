@@ -119,15 +119,14 @@ internal class XCursor {
 
     public static bool IsXCursor(string fileName) {
         try {
-            using(FileStream fs = new(fileName, FileMode.Open, FileAccess.Read)) {
-                using(BinaryReader br = new(fs)) {
-                    byte[] b = br.ReadBytes(4);
-                    Array.Reverse(b);
-                    UInt32 magic = BitConverter.ToUInt32(b, 0);
+            using FileStream fs = new(fileName, FileMode.Open, FileAccess.Read);
+            using BinaryReader br = new(fs);
+            byte[] b = br.ReadBytes(4);
+            if(b.Length < 4) return false;
+            Array.Reverse(b);
+            UInt32 magic = BitConverter.ToUInt32(b, 0);
 
-                    return magic == XCURSOR_MAGIC;
-                }
-            }
+            return magic == XCURSOR_MAGIC;
         } catch {
             return false;
         }

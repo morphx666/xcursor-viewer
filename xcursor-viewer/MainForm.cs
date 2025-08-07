@@ -86,7 +86,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 }
             } catch { }
         });
-    }    
+    }
 
     private void ParseCommandLine(string[] args) {
         if(args.Length > 0) {
@@ -181,13 +181,13 @@ partial class MainForm : Form, INotifyPropertyChanged {
             FSItem item = (FSItem)TreeGridViewFolders.SelectedItem;
             if(item == null) return;
 
-            UpdateBreadcrumbs(item.Path);
-
             if(item.IsFile) {
                 if(item.Cursor != null) {
                     frames = new (int Index, long LastUpdate)[item.Cursor.Images.Count];
                     selectedCursors.Add(item.Cursor);
                 }
+
+                UpdateBreadcrumbs(item.Path.Replace(item.Name, ""));
             } else {
                 int framesCount = 0;
                 foreach(FSItem subItem in item.Children) {
@@ -197,6 +197,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
                     }
                 }
                 frames = new (int Index, long LastUpdate)[framesCount * MAX_CURSORS_PER_FILE];
+
+                UpdateBreadcrumbs(item.Path);
             }
         };
     }
@@ -205,15 +207,20 @@ partial class MainForm : Form, INotifyPropertyChanged {
         stackLayoutBreadCrumbs.Items.Clear();
 
         char pathDelimiter = Path.DirectorySeparatorChar;
-        List<string> tokens = [..path.Split(pathDelimiter)];
+        path = path.TrimEnd(pathDelimiter);
+
+        List<string> tokens = [.. path.Split(pathDelimiter)];
         if(Environment.OSVersion.Platform == PlatformID.Unix) tokens.Insert(0, "root");
+
+        string currentPath = "";
         for(int i = 0; i < tokens.Count; i++) {
             string token = tokens[i];
-            if(token == "") continue;
+            currentPath = Path.Combine(currentPath, token);
             Label labelToken = new() {
                 Text = token,
                 //TextColor = Colors.DarkBlue,
                 Font = breadcrumbFont,
+                Tag = currentPath
             };
             stackLayoutBreadCrumbs.Items.Add(labelToken);
 
@@ -229,6 +236,17 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 labelToken.Cursor = Cursors.Default;
             };
 
+            labelToken.MouseDown += (sender, e) => {
+                if(e.Buttons == MouseButtons.Primary) {
+                    string itemPath = (string)labelToken.Tag;
+                    FSItem item = treeGridItems.FindItemByPath(itemPath);
+                    if(item != null) {
+                        TreeGridViewFolders.SelectedItem = item;
+                        TreeGridViewFolders.ScrollToRow(TreeGridViewFolders.SelectedRow);
+                    }
+                }
+            };
+
             if(i < tokens.Count - 1) {
                 Label labelSeparator = new() {
                     Text = pathDelimiter.ToString(),
@@ -237,7 +255,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 };
                 stackLayoutBreadCrumbs.Items.Add(labelSeparator);
             }
-            
+
         }
 
     }
@@ -253,7 +271,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
             TreeGridViewFolders.SelectedItem = item;
         }
     }
-    
+
     private void RenderCursors(PaintEventArgs e) {
         var g = e.Graphics;
 
