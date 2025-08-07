@@ -15,6 +15,7 @@ partial class MainForm : Form {
     private TreeGridView TreeGridViewFolders;
     private TreeGridItemCollection treeGridItems = [];
     private Scrollable scrollableContainer;
+    private StackLayout stackLayoutbreadCrumbs;
 
     void InitializeComponent() {
         Title = "XCursor Viewer";
@@ -79,6 +80,13 @@ partial class MainForm : Form {
             Padding = new Padding(0),
         };
 
+        stackLayoutbreadCrumbs = new StackLayout {
+            Orientation = Orientation.Horizontal,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            VerticalContentAlignment = VerticalAlignment.Center,
+            Padding = new Padding(0),
+        };
+
         this.Content = new Splitter {
             Orientation = Orientation.Horizontal,
             Panel1MinimumSize = 300,
@@ -90,6 +98,12 @@ partial class MainForm : Form {
                 Spacing = 10,
                 Padding = new Padding(0, 0, 10, 0),
                 Items = {
+                    new Scrollable {
+                        Content = stackLayoutbreadCrumbs,
+                        ExpandContentWidth = true,
+                        ExpandContentHeight = true,
+                        Padding = new Padding(10, 10),
+                    },
                     new StackLayoutItem {
                         Control = TreeGridViewFolders,
                         Expand = true,

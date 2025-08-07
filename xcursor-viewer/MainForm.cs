@@ -7,7 +7,6 @@ using System.Linq;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace xcursor_viewer;
 
@@ -17,6 +16,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
     private float zoom = 1.0f;
     private bool isCtrlDown = false;
     private readonly Font cursorNameFont;
+    private readonly Font breadcrumbFont;
+    private readonly Font breadcrumbFontHover;
 
     private const int MAX_CURSORS_PER_FILE = 1_000;
 
@@ -62,7 +63,9 @@ partial class MainForm : Form, INotifyPropertyChanged {
     public MainForm(string[] args) {
         InitializeComponent();
 
-        cursorNameFont = new Font(FontFamilies.Sans, 12, FontStyle.Bold);
+        cursorNameFont = new Font(FontFamilies.Sans, Eto.Platform.Instance.IsWpf ? 10 : 12, FontStyle.Bold);
+        breadcrumbFont = new Font(FontFamilies.Sans, 8, FontStyle.Bold);
+        breadcrumbFontHover = new Font(FontFamilies.Sans, 8, FontStyle.Bold, FontDecoration.Underline);
 
         string appTheme = Environment.OSVersion.Platform == PlatformID.Win32NT ? "black" : "white";
         driveIcon = Bitmap.FromResource($"xcursor_viewer.Resources.drive-icon-{appTheme}.png");
@@ -83,7 +86,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 }
             } catch { }
         });
-    }
+    }    
 
     private void ParseCommandLine(string[] args) {
         if(args.Length > 0) {
@@ -178,6 +181,8 @@ partial class MainForm : Form, INotifyPropertyChanged {
             FSItem item = (FSItem)TreeGridViewFolders.SelectedItem;
             if(item == null) return;
 
+            UpdateBreadcrumbs(item.Path);
+
             if(item.IsFile) {
                 if(item.Cursor != null) {
                     frames = new (int Index, long LastUpdate)[item.Cursor.Images.Count];
@@ -196,7 +201,44 @@ partial class MainForm : Form, INotifyPropertyChanged {
         };
     }
 
+    private void UpdateBreadcrumbs(string path) {
+        stackLayoutbreadCrumbs.Items.Clear();
+
+        string[] tokens = path.Split(Path.DirectorySeparatorChar);
+        foreach(string token in tokens) {
+            if(token == "") continue;
+            Label labelToken = new() {
+                Text = token,
+                TextColor = Colors.DarkBlue,
+                Font = breadcrumbFont,
+            };
+
+            labelToken.MouseEnter += (sender, e) => {
+                labelToken.TextColor = Colors.Blue;
+                labelToken.Font = breadcrumbFontHover;
+                labelToken.Cursor = Cursors.Pointer;
+            };
+
+            labelToken.MouseLeave += (sender, e) => {
+                labelToken.TextColor = Colors.DarkBlue;
+                labelToken.Font = breadcrumbFont;
+                labelToken.Cursor = Cursors.Default;
+            };
+
+            Label labelSeparator = new() {
+                Text = "\\",
+                TextColor = Colors.DarkGray,
+                Font = breadcrumbFont,
+            };
+            stackLayoutbreadCrumbs.Items.Add(labelToken);
+            stackLayoutbreadCrumbs.Items.Add(labelSeparator);
+        }
+
+    }
+
     private void PopulateItemChildren(FSItem item) {
+        if(item.Children.Count == 0) return;
+
         if(((FSItem)item.Children[0]).Name == null) {
             PopulateTreeGridItem(item.Path, item);
             item.Children.RemoveAt(0);
@@ -205,6 +247,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
             TreeGridViewFolders.SelectedItem = item;
         }
     }
+    
     private void RenderCursors(PaintEventArgs e) {
         var g = e.Graphics;
 
@@ -223,7 +266,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 XCursor selectedCursor = selectedCursors[j];
 
                 g.DrawText(cursorNameFont, darkMode ? Brushes.White : Brushes.Black, new PointF(cx, cy), selectedCursor.Name);
-                cy += (int)(cursorNameFont.LineHeight * 1.1);
+                cy += (int)(cursorNameFont.LineHeight * 1.1 + (Eto.Platform.Instance.IsWpf ? 4 : 0));
 
                 for(int i = 0; i < selectedCursor.Images.Count; i++) {
                     if(selectedCursor.Images[i].Count == 0) continue;
