@@ -1,12 +1,5 @@
-﻿using System;
-using Eto.Forms;
+﻿using Eto.Forms;
 using Eto.Drawing;
-using Eto.Serialization.Json;
-using System.Threading.Tasks;
-using System.IO;
-using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 
 namespace xcursor_viewer;
 
@@ -86,6 +79,12 @@ partial class MainForm : Form {
             VerticalContentAlignment = VerticalAlignment.Center,
             Padding = new Padding(0),
             Spacing = 3,
+            Items = {
+                new Label {
+                    Text = " ",
+                    Font = breadcrumbFont,
+                }
+            }
         };
 
         this.Content = new Splitter {
@@ -103,8 +102,9 @@ partial class MainForm : Form {
                         Content = stackLayoutBreadCrumbs,
                         ExpandContentWidth = true,
                         ExpandContentHeight = true,
-                        Padding = new Padding(0),
-                        Border = BorderType.None
+                        Padding = new Padding(10),
+                        Border = BorderType.None,
+                        BackgroundColor = Canvas.BackgroundColor,
                     },
                     new StackLayoutItem {
                         Control = TreeGridViewFolders,

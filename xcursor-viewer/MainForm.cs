@@ -64,7 +64,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
         InitializeComponent();
 
         cursorNameFont = new Font(FontFamilies.Sans, Eto.Platform.Instance.IsWpf ? 10 : 12, FontStyle.Bold);
-        breadcrumbFont = new Font(FontFamilies.Sans, Eto.Platform.Instance.IsWpf ? 8 : 10, FontStyle.Bold);
+        breadcrumbFont = new Font(FontFamilies.Sans, 8, FontStyle.Bold);
         breadcrumbFontHover = new Font(FontFamilies.Sans, breadcrumbFont.Size, FontStyle.Bold, FontDecoration.Underline);
 
         string appTheme = Environment.OSVersion.Platform == PlatformID.Win32NT ? "black" : "white";
@@ -190,7 +190,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
                 UpdateBreadcrumbs(item.Path.Replace(item.Name, ""));
             } else {
                 int framesCount = 0;
-                foreach(FSItem subItem in item.Children) {
+                foreach(FSItem subItem in item.Children.Cast<FSItem>()) {
                     if(subItem.IsFile && subItem.Cursor != null) {
                         framesCount += subItem.Cursor.Images.Count;
                         selectedCursors.Add(subItem.Cursor);
@@ -218,20 +218,20 @@ partial class MainForm : Form, INotifyPropertyChanged {
             currentPath = Path.Combine(currentPath, token);
             Label labelToken = new() {
                 Text = token,
-                //TextColor = Colors.DarkBlue,
+                TextColor = Colors.Gainsboro,
                 Font = breadcrumbFont,
                 Tag = currentPath
             };
             stackLayoutBreadCrumbs.Items.Add(labelToken);
 
             labelToken.MouseEnter += (sender, e) => {
-                //labelToken.TextColor = Colors.Blue;
+                labelToken.TextColor = Colors.White; 
                 labelToken.Font = breadcrumbFontHover;
                 labelToken.Cursor = Cursors.Pointer;
             };
 
             labelToken.MouseLeave += (sender, e) => {
-                //labelToken.TextColor = Colors.DarkBlue;
+                labelToken.TextColor = Colors.Gainsboro;
                 labelToken.Font = breadcrumbFont;
                 labelToken.Cursor = Cursors.Default;
             };
@@ -239,10 +239,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
             labelToken.MouseDown += (sender, e) => {
                 if(e.Buttons == MouseButtons.Primary) {
                     string itemPath = (string)labelToken.Tag;
-                    if(Environment.OSVersion.Platform == PlatformID.Unix) {
-                        if(itemPath.StartsWith("root")) itemPath = itemPath[4..];
-                        Console.WriteLine($"Breadcrumb clicked: {itemPath}");
-                    }
+                    if(Environment.OSVersion.Platform == PlatformID.Unix && itemPath.StartsWith("root")) itemPath = itemPath[4..];
                     FSItem item = treeGridItems.FindItemByPath(itemPath);
                     if(item != null) {
                         TreeGridViewFolders.SelectedItem = item;
@@ -254,7 +251,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
             if(i < tokens.Count - 1) {
                 Label labelSeparator = new() {
                     Text = pathDelimiter.ToString(),
-                    //TextColor = Colors.DarkGray,
+                    TextColor = Colors.DarkGray,
                     Font = breadcrumbFont,
                 };
                 stackLayoutBreadCrumbs.Items.Add(labelSeparator);
