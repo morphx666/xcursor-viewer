@@ -238,7 +238,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
 
             labelToken.MouseDown += (sender, e) => {
                 if(e.Buttons == MouseButtons.Primary) {
-                    string itemPath = (string)labelToken.Tag;
+                    string itemPath = ((string)labelToken.Tag).Replace("root", "");
                     FSItem item = treeGridItems.FindItemByPath(itemPath);
                     if(item != null) {
                         TreeGridViewFolders.SelectedItem = item;
