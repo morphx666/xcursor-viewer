@@ -209,7 +209,7 @@ partial class MainForm : Form, INotifyPropertyChanged {
         char pathDelimiter = Path.DirectorySeparatorChar;
         path = path.TrimEnd(pathDelimiter);
 
-        List<string> tokens = [.. path.Split(pathDelimiter)];
+        List<string> tokens = [.. path.Split(pathDelimiter).Where(t => t != "")];
         if(Environment.OSVersion.Platform == PlatformID.Unix) tokens.Insert(0, "root");
 
         string currentPath = "";
@@ -238,7 +238,11 @@ partial class MainForm : Form, INotifyPropertyChanged {
 
             labelToken.MouseDown += (sender, e) => {
                 if(e.Buttons == MouseButtons.Primary) {
-                    string itemPath = ((string)labelToken.Tag).Replace("root", "");
+                    string itemPath = (string)labelToken.Tag;
+                    if(Environment.OSVersion.Platform == PlatformID.Unix) {
+                        if(itemPath.StartsWith("root")) itemPath = itemPath[4..];
+                        Console.WriteLine($"Breadcrumb clicked: {itemPath}");
+                    }
                     FSItem item = treeGridItems.FindItemByPath(itemPath);
                     if(item != null) {
                         TreeGridViewFolders.SelectedItem = item;
