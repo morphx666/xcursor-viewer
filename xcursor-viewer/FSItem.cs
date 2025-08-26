@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using static xcursor_viewer.MainForm;
+using System.Diagnostics;
 
 namespace xcursor_viewer;
 
@@ -13,8 +14,14 @@ public partial class MainForm {
         public string Path { get; }
         public XCursor Cursor { get; }
         public Icon Icon { get; }
-        public string ImagesCountAsString  => Cursor?.Images.Count.ToString() ?? "";
-        public string HasAnimationsAsString => (Cursor?.Images.Any(f => f.Count > 1) ?? false) ? "✓" : "";
+        public int ImagesCount => Cursor?.Images.Sum(i => i.Count) ?? 0;
+        public string ImagesCountAsString => ImagesCount > 0
+            ? HasAnimations
+                ? $"{ImagesCount / Cursor?.Images.First().Count}x{Cursor?.Images.First().Count}"
+                : ImagesCount.ToString()
+            : "";
+        public bool HasAnimations => Cursor?.Images.Any(f => f.Count > 1) ?? false;
+        public string HasAnimationsAsString => HasAnimations ? "✓" : "";
         public bool IsFile { get; }
 
         public FSItem() { }
@@ -26,6 +33,7 @@ public partial class MainForm {
 
             if(isFile && File.Exists(path) && XCursor.IsXCursor(path)) {
                 Cursor = new XCursor(path);
+                //if(path.EndsWith("alias")) Debugger.Break();
                 Icon = Cursor.Images.First().First().WithSize(22, 22);
             } else {
                 Cursor = null;

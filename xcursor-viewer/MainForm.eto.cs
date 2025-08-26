@@ -89,7 +89,7 @@ partial class MainForm : Form {
 
         this.Content = new Splitter {
             Orientation = Orientation.Horizontal,
-            Panel1MinimumSize = 300,
+            Panel1MinimumSize = 320,
             SplitterWidth = 10,
             Panel1 = new StackLayout {
                 Orientation = Orientation.Vertical,
